@@ -44,6 +44,11 @@ Once the initial config has been set up you will now have a tab named with your 
 Add your API key or any other credentials required, Save and the APES module will check with the third party mail service, and add in the extra custom fields to your mail list if they haven't already been added.
 
 
+##Extra Mail List Tools
+There is a basic MailChimp Sign Up form page type included in this module to allow for email list sign up outside of the Members object, to collect newsletter sign ups for instance.
+It pulls the API key and list ID direct from the APES SiteConfig but does not affect the Member object.
+Please add a similar function if you fork and add new email services to the APES module :)
+
 
 ##TODO
 *  Add a bunch more service providers and make the whole thing less MailChimp centric.

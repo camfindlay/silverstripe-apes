@@ -1,5 +1,18 @@
 <?php
-
+/**
+ * MailChimp Sign Up Form
+ * 
+ * Quick and dirty implementation of a mailchimp sign up for outside of the APES system but providing a useful form to create leads.
+ *
+ * PHP version 5
+ *	
+ * @package    apes
+ * @author     Shea Dawson <shea@livesource.co.nz>
+ * @author     Cam Findlay <cam@camfindlay.com>
+ * @copyright  2011 Cam Findlay Consulting
+ * @version    SVN: $Id$      
+ * @uses	   MCAPI
+ */
 class MCSubscriptionPage extends Page{
 
 }
@@ -13,7 +26,8 @@ class MCSubscriptionPage_Controller extends Page_Controller{
 	public function SubscribeForm()
 	{	 	
         $fields = new FieldSet(
-            new TextField('Name'),
+            new TextField('FirstName'),
+            new TextField('Surname'),
             new TextField('Email')
         );
          
@@ -32,13 +46,15 @@ class MCSubscriptionPage_Controller extends Page_Controller{
     function doSubscribe($data, $form) 
     {
      	$email = $data['Email'];
-     	$name = $data['Name'];
+     	$fname = $data['FirstName'];
+     	$lname = $data['Surname'];
      	
      	$siteconfig = SiteConfig::current_site_config();
        	$api = new MCAPI($siteconfig->MailchimpApiKey);
        	
        	$merge_vars = array(
-			'FNAME'=>$name
+			'FNAME'=>$fname,
+			'LNAME'=>$lname
 		);
 			
        	if($api->listSubscribe(
@@ -48,7 +64,7 @@ class MCSubscriptionPage_Controller extends Page_Controller{
        		'html', 
        		false, true, true, false)
        	){
-       		$this->setMessage('Success', "Thank you $name, you are now subscribed. Chur!");
+       		$this->setMessage('Success', "Thank you $fname, you are now subscribed.");
        		$this->redirectBack();
        	}else{
        		$this->setMessage('Error', $api->errorMessage);
