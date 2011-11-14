@@ -24,22 +24,57 @@ APES automates the process of setting up custom variables stored in third party 
 
 You can choose which Member object properties are sync'd even if you have decorated your Member object with additional information i.e. address, phone numbers etc
 
-###Config
-In your '/mysite/_config.php'
+##Config
 
-Add the following to set up the properties of your Member you wish to have pushed to your mail service.
-FirstName, Surname and Email are automatically included, no need to add these.
+### Step 1 - Mail Service Specific
+In the future, APES will have multiple email services to choose from, each service will require you to extend your Member and SiteConfig in the /mysites/_config.php file. Below is a working example for the current MailChimp mail service.
+Note: you must include a service specific extension in order for APES to work.
 
-
-<code php>
-//APES - Mailchimp
+<code>
 Object::add_extension('Member', 'MailChimp');
+</code>
+<code>
 Object::add_extension('SiteConfig', 'MailChimpSiteConfig');
-APES::setSyncFields(array('Birthday','Interests'));
 </code>
 
+
+Once you have your mail service set, you can add API key information in the SiteConfig.
+
+By default if you do not specify any Sync Fields your Member's FirstName, Surname and Email fields will Sync with the mail service.
+
+You have 2 options for setting Sync Fields, Hardcoded or SiteConfig
+
+### Step 2a - Sync Fields - Hardcoded
+
+The hardcoded method of Sync Fields sets an array in your '/mysite/_config.php'.
+This is handy if you intend to create a site in which you would rather the end user cannot change the Sync Fields you have set up.
+Note: FirstName, Surname and Email are automatically included, no need to add these.
+
+<code>
+APES::setSyncFields(array('Birthday','Age','CustomField'));
+</code>
+
+APES will automatically detect the data type of the Sync Field and create the appropriate custom fields in your mail service once you have added your API key etc and saved the SiteConfig.
+
+###Step 2b - SiteConfig
+The alternative way of setting up Sync Fields in APES is to add the following to your /mysite/_config.php file:
+
+<code php>
+APES::setSyncFields('SiteConfig');
+</code>
+
+This will move the setting up of the Sync Fields to the APES tab in your SiteConfig in the CMS panel.
+
+You will need to supply a comma separated list of the Sync Fields you want setup and save the SiteConfig.
+
+This is handy if you are running your own site or have a client that wants to on occasion change the Sync Fields that are being pushed into your mail service.
+
+You also have the option to turn on "Double Opt In" if you use the SiteConfig method so your Member has to confirm that they wish to be part of your mail list (Setting up the emails and confirmation pages are mail service specific and beyond the scope of this documentation, I can however post a how to on request if you would like to get in touch via email (<cam@camfindlay.com>) ).
+
+
+
 ###Setting the API connection
-Once the initial config has been set up you will now have a tab named with your mail service in your SiteConfig e.g. MailChimp
+Once the initial config has been set up you will now have a tab named with your mail service in your SiteConfig e.g. APES
 
 Add your API key or any other credentials required, Save and the APES module will check with the third party mail service, and add in the extra custom fields to your mail list if they haven't already been added.
 
@@ -52,5 +87,5 @@ Please add a similar function if you fork and add new email services to the APES
 
 ##TODO
 *  Add a bunch more service providers and make the whole thing less MailChimp centric.
-*  Add the ability to set which email service you want in the SiteConfig.
-*  Detect the type of object property is being set up on install and create the correct custom variable type in the 3rd party service. Example if you are trying to sync a Birthday, on install it will set the 3rd party service's custom field to a 'date' type, currently only creates 'text' type.
+*  Continue to tidy and comment code.
+*  Double Opt In setting for people using the hardcoded method.
