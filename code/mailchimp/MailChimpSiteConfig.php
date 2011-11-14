@@ -23,45 +23,30 @@
 				'MailchimpListId' => 'Text',
 				'MailchimpInstalled' => 'Boolean',
 				
-				),
-			
-			'has_one' => array(
-				),
-				
-			'has_many' => array(
-				),
-				
-			'summary_fields' => array(
-				),
-
-			'searchable_fields' => array( 
-				),
-	
-			'field_labels' => array(
-				)
-
-				
+				)				
 		);
  	
  }
  
- public function updateCMSFields(FieldSet &$fields) {
+public function updateCMSFields(FieldSet &$fields) {
+ 		$siteconfig = $this->owner;
+ 		 		
+ 		$fields->addFieldToTab('Root.APES', new HeaderField('MailChimp Setup'));
  		
- 		
- 		/*Custom Mailchimp Settings
-		 * 
-		 */
-         $fields->addFieldToTab("Root.MailChimp", new TextField("MailchimpApiKey", 'MailChimp API Key'));
-	     $fields->addFieldToTab("Root.MailChimp", new TextField("MailchimpListId", 'MailChimp List ID'));
+         $fields->addFieldToTab("Root.APES", new TextField("MailchimpApiKey", 'MailChimp API Key'));
+	     $fields->addFieldToTab("Root.APES", new TextField("MailchimpListId", 'MailChimp List ID'));
 
  		
- 		$installed = new TextField("MailchimpInstalled",'Is MailChimp Installed?');
+ 		$installed = new CheckboxField("MailchimpInstalled",'Is MailChimp Installed?');
 		$installed = $installed->transform(new ReadonlyTransformation());
-		$fields->addFieldToTab('Root.MailChimp',$installed);
- 
+		
+		
+		$fields->addFieldToTab('Root.APES',$installed);
+ 			
  }
+
  
- public function updateFrontEndFields($fields) {}
+
  
 	public function onBeforeWrite(){
 		$siteconfig = $this->owner;
@@ -76,14 +61,20 @@
  
 	public function onAfterWrite(){
  	
- 		//only run the mailchimp extensions if they have set a API ket and List ID
+ 		//only run the mailchimp extensions if they have set a API key, List ID and some sync fields
  		$siteconfig = $this->owner;
- 		if($siteconfig->MailchimpApiKey && $siteconfig->MailchimpListId){
+ 		if($siteconfig->MailchimpApiKey && $siteconfig->MailchimpListId && APES::getSyncFields()){
  	
  	
  			$api = new MCAPI($siteconfig->MailchimpApiKey);
  	
- 		 	$fields = APES::$syncFields;
+ 		 	
+ 		 	
+ 		 	$fields = APES::getSyncFields();
+ 	 		
+ 	 		
+ 	 		
+ 	 		
  	 		
  	 		$mergefields = array();
  	
@@ -95,8 +86,43 @@
  			foreach($fields as $field){
  				if(!in_array($field, $mergefields)){
  					$tag = strtoupper(substr($field,0,8));
+ 					
+ 					//find the type of data in the field - text, number, radio, dropdown, date, address, phone, url, imageurl
+ 					$datatype = DataObject::database_fields('Member');
+ 					 						
+ 					switch($datatype[$field]){
+ 					
+ 						case 'Date':
+ 							$field_type = 'date';
+ 							break;
+ 						
+ 						case 'SS_Datetime':
+ 							$field_type = 'date';
+ 							break;
  							
- 					$api->listMergeVarAdd($siteconfig->MailchimpListId, $tag, $field, array('field_type'=>'text') );
+ 						case 'Int':
+ 							$field_type = 'number';
+ 							break;
+ 						
+ 						case 'Currency':
+ 							$field_type = 'number';
+ 							break;
+ 							
+ 						case 'Decimal':
+ 							$field_type = 'number';
+ 							break;
+ 							
+ 						case 'Percentage':
+ 							$field_type = 'number';
+ 							break;
+ 						
+ 						default:
+ 							$field_type = 'text';
+ 							break;
+ 					
+ 						}
+ 							
+ 					$api->listMergeVarAdd($siteconfig->MailchimpListId, $tag, $field, array('field_type'=>$field_type) );
  					
  					
 					

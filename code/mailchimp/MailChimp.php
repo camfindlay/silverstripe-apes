@@ -46,12 +46,10 @@
  
  public function updateFrontEndFields($fields) {}
  
- public function onBeforeWrite(){}
+ public function onBeforeWrite(){
  
  
- public function onAfterWrite(){
- 	
-	$siteconfig = SiteConfig::current_site_config();
+ $siteconfig = SiteConfig::current_site_config();
 	
 	if($siteconfig->MailchimpInstalled){
 	
@@ -62,37 +60,45 @@
 			);
 	
 	
-		
 	
-		foreach(APES::$syncFields as $field){
+	
+	//setup the fields to sync if they have been entered in to SiteConfig
+	if(APES::getSyncFields()){
+	$fields = APES::getSyncFields();
+	foreach($fields as $field){
 			$tag = strtoupper(substr($field,0,8));
-		
-			
-	
 			$merge_vars[$tag] = $this->owner->$field;
-		
-		
-			}		
+			}
+		}		
 	
 			
-			
-			
-		//add custom syncfields here
-	//@todo use statics to set the double optin etc
-			if(!$this->isUnsubscribed($this->owner->Email)){
-					$api->listSubscribe( $siteconfig->MailchimpListId, $this->owner->Email,$merge_vars,'html',false,true,true,false);
+			//make sure the member did't unsubscribe 
+	 		if(!$this->isUnsubscribed($this->owner->Email)){
 					
+					$doubleoptin = ($siteconfig->DoubleOptIn == 1) ? true : false;
+					
+					//add them or update them in the list.
+					$api->listSubscribe( $siteconfig->MailchimpListId, $this->owner->Email,$merge_vars,'html',$doubleoptin,true,true,false);
+					
+					//return the unique MC id for this member - may look at using this later to do 2 way sync.
 					$memberinfo = $api->listMemberInfo($siteconfig->MailchimpListId, $this->owner->Email);
-					
-					
 					$this->owner->MailChimpID = $memberinfo['id'];
+					
 					}
 	
 	
 	
 	}
 	
-}
+
+ 
+ 
+ }
+ 
+ 
+ public function onAfterWrite(){
+ 	
+	}
  
  public function onBeforeDelete(){
  //remove the member from mailchimp if they ask to be deleted
