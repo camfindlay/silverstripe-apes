@@ -32,7 +32,7 @@ class APES extends DataObjectDecorator {
 			
 			case 'SiteConfig':
 				self::$syncFields = null;
-				Object::add_extension('SiteConfig', 'APESConfig'); 
+				Object::add_extension('SiteConfig', 'APESSiteConfig'); 
 				break;
 			default: self::$syncFields = $fields;
 		}

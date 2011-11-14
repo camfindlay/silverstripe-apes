@@ -11,7 +11,7 @@
  * @copyright  2011 Cam Findlay Consulting
  * @version    SVN: $Id$      
  */
-class APESConfig extends DataObjectDecorator {
+class APESSiteConfig extends DataObjectDecorator {
 
    		
    		

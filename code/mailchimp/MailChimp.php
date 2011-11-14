@@ -66,6 +66,7 @@
 	if(APES::getSyncFields()){
 	$fields = APES::getSyncFields();
 	foreach($fields as $field){
+			$field = trim($field);
 			$tag = strtoupper(substr($field,0,8));
 			$merge_vars[$tag] = $this->owner->$field;
 			}
@@ -75,7 +76,9 @@
 			//make sure the member did't unsubscribe 
 	 		if(!$this->isUnsubscribed($this->owner->Email)){
 					
-					$doubleoptin = ($siteconfig->DoubleOptIn == 1) ? true : false;
+					
+					
+					$doubleoptin = ($siteconfig->APESDoubleOptIn) ? true : false;
 					
 					//add them or update them in the list.
 					$api->listSubscribe( $siteconfig->MailchimpListId, $this->owner->Email,$merge_vars,'html',$doubleoptin,true,true,false);

@@ -84,7 +84,11 @@ public function updateCMSFields(FieldSet &$fields) {
  				}
  	
  			foreach($fields as $field){
- 				if(!in_array($field, $mergefields)){
+ 			
+ 			//make sure there is no whitespace
+ 			$field = trim($field);
+ 			
+ 				if(!in_array($fields, $mergefields)){
  					$tag = strtoupper(substr($field,0,8));
  					
  					//find the type of data in the field - text, number, radio, dropdown, date, address, phone, url, imageurl

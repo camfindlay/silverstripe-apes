@@ -26,9 +26,9 @@ class MCSubscriptionPage_Controller extends Page_Controller{
 	public function SubscribeForm()
 	{	 	
         $fields = new FieldSet(
-            new TextField('FirstName'),
-            new TextField('Surname'),
-            new TextField('Email')
+            new TextField('FirstName','First Name'),
+            new TextField('Surname','Last Name'),
+            new TextField('Email','Email Address')
         );
          
         $actions = new FieldSet(
