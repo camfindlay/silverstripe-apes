@@ -1,5 +1,5 @@
 <?php
-
+//@TODOmake this into a build taks to create the MERGE fields.
 /**
  * MailChimp SiteConfig
  * 
@@ -15,7 +15,7 @@
  * @version    SVN: $Id$      
  * @uses	   MCAPI
  */
-class MailChimpSiteConfig extends DataExtension {
+/*class MailChimpSiteConfig extends DataExtension {
 
     public static $db = array(
         'MailchimpApiKey' => 'Text',
