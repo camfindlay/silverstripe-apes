@@ -9,12 +9,16 @@ When a Member logs in and changes details about themselves (object properties at
 *  Shea Dawson (<shea@livesource.co.nz>)
 
 ## Requirements
-*  SilverStripe 2.4+.
-*  API Keys for mail services (At present a MailChimp API Key and List ID (http://mailchimp.com) )
+*  SilverStripe 3.1
+* Mailchimp PHP API Wrapper 2.0
+*  API credentials (MailChimp API Key and List ID)
 
 ## Project Links
-*  [GitHub Project Page](https://github.com/cam-findlay/apes)
-*  [Issue Tracker](https://github.com/cam-findlay/apes/issues)
+*  [GitHub Project Page](https://github.com/camfindlay/apes)
+*  [Issue Tracker](https://github.com/camfindlay/apes/issues)
+
+
+# NOTE THIS MODULE IS IN REDEVELOPMENT BELOW DOCUMENTATION WILL BE REWRITTEN AS THE WHOLE MODULE IS BEING REFACTORED.
 
 ##Usage
 
@@ -23,6 +27,8 @@ Make sure to name your module folder "apes" (all lowercase).
 APES automates the process of setting up custom variables stored in third party email services and makes use of their APIs
 
 You can choose which Member object properties are sync'd even if you have decorated your Member object with additional information i.e. address, phone numbers etc
+
+
 
 ##Config
 

@@ -1,73 +1,23 @@
 <?php
+use Mailchimp;
 /**
  * Automated Provision for Email Services (APES)
  * 
- * Set the fields on the member that should be sync'd up with mailchimp
+ * When provided credentials and an array of Member fields to sync this will keep SilverStripe and Mailchimp in sync if a user has opted in to recevie emails.
  *
- * PHP version 5
- *	
  * @package    apes
- * @author     Cam Findlay <cam@camfindlay.com>
- * @copyright  2011 Cam Findlay Consulting
- * @version    SVN: $Id$      
+ * @author     Cam Findlay <cam@silverstripe.com>
  */
-class APES extends DataObjectDecorator {
+class APES extends DataExtension {
 
-	
+  private static $mailchimp_api_key;
 
-   
-   public static $syncFields = array();
-   
-   
-    
-   
-   
-   
-   	/**
-     * Sets the sync fields either with hardcoded array or sets up SiteConfig to accept comma separated list
-     */      
-   public static function setSyncFields($fields){
-   
-   		switch($fields) {
-			
-			case 'SiteConfig':
-				self::$syncFields = null;
-				Object::add_extension('SiteConfig', 'APESSiteConfig'); 
-				break;
-			default: self::$syncFields = $fields;
-		}
+  private static $mailchimp_list_id;
+  
+  private static $sync_member_fields = array('FirstName', 'Email');
 
-   
-   		
-     
-   		}
-   
-   /**
-   	 * Returns either the hardcoded or SiteCOnfig set SyncFields 
-   	 * @return array the fields to be sync'd
-   	 */	
-   public static function getSyncFields(){
-   $siteconfig = SiteConfig::current_site_config();
-   if(self::$syncFields <> null && is_array(self::$syncFields)){
-   		$array = self::$syncFields;  
-   		} else {
-   		$array = explode(',',$siteconfig->APESSyncFields);		
-  		}
-  		
-  		if(empty($array[0])){
-  			return false;
-  			}else{
-  			return $array;
-  			}	
-   
-   
-   } 
-
-
-
-
-
-
-
+  private static $db = array(
+      'MailChimpID'=>'Varchar'
+  );
 	   
 }

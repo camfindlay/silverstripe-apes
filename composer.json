@@ -1,15 +1,16 @@
 {
         "name": "camfindlay/apes",
-        "description": "The APES module will allow you to set up an automated sync mechanism between the SilverStripe Member object and MailChimp.",
+        "description": "The Automated Provision of Email Services (APES) module will allow you to set up an automated sync mechanism between the SilverStripe Member DataObject and MailChimp.",
         "type": "silverstripe-module",
         "keywords": ["silverstripe","mailchimp","email","member"],
         "license": "BSD-3-Clause",
         "authors": [{
                 "name": "Cam Findlay",
-                "email": "cam@camfindlay.com"
+                "email": "cam@silverstripe.com"
         }],
         "require": {
-                "silverstripe/framework": "2.4.*", 
-                "silverstripe/cms": "2.4.*"
+                "silverstripe/framework": "~3.1", 
+                "silverstripe/cms": "~3.1",
+                "mailchimp/mailchimp": "2.0.*@stable"
         }
 }
