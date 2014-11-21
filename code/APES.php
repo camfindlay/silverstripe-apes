@@ -1,5 +1,5 @@
 <?php
-use Mailchimp;
+
 /**
  * Automated Provision for Email Services (APES)
  * 
@@ -10,14 +10,25 @@ use Mailchimp;
  */
 class APES extends DataExtension {
 
-  private static $mailchimp_api_key;
+    private static $mailchimp_api_key;
+    private static $mailchimp_list_id;
+    private static $sync_member_fields = array('FNAME', 'Email');
+    private static $db = array(
+        'MailChimpID' => 'Varchar'
+    );
 
-  private static $mailchimp_list_id;
-  
-  private static $sync_member_fields = array('FirstName', 'Email');
+    public static function getSyncFields() {
+        $siteconfig = SiteConfig::current_site_config();
+        if (self::$sync_member_fields <> null && is_array(self::$sync_member_fields)) {
+            $array = self::$sync_member_fields;
+        } else {
+            $array = explode(',', $siteconfig->APESSyncFields);
+        }
+        if (empty($array[0])) {
+            return false;
+        } else {
+            return $array;
+        }
+    }
 
-  private static $db = array(
-      'MailChimpID'=>'Varchar'
-  );
-	   
 }
