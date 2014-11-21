@@ -31,7 +31,7 @@ class MailChimp extends DataExtension {
 
     public function onBeforeWrite() {
         $changed = $this->owner->getChangedFields();
-        //only do this is more than the LastLoggedIn has changed
+        //only do this if actual data has changed, not just LastEdited etc
         if (count($changed) > 3) {
             $siteconfig = SiteConfig::current_site_config();
 
