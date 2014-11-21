@@ -33,7 +33,6 @@ class MailChimpSiteConfig extends DataExtension {
         $installed = new CheckboxField("MailchimpInstalled", 'Is MailChimp Installed?');
         $installed = $installed->transform(new ReadonlyTransformation());
 
-
         $fields->addFieldToTab('Root.APES', $installed);
     }
 

@@ -30,36 +30,41 @@ class MailChimp extends DataExtension {
     }
 
     public function onBeforeWrite() {
-        $siteconfig = SiteConfig::current_site_config();
+        $changed = $this->owner->getChangedFields();
+        //only do this is more than the LastLoggedIn has changed
+        if (count($changed) > 3) {
+            $siteconfig = SiteConfig::current_site_config();
 
-        if ($siteconfig->MailchimpInstalled) {
+            if ($siteconfig->MailchimpInstalled) {
 
-            $api = new MCAPI($siteconfig->MailchimpApiKey);
-            $merge_vars = array(
-                'FNAME' => $this->owner->FirstName,
-                'LNAME' => $this->owner->Surname,
-            );
+                $api = new MCAPI($siteconfig->MailchimpApiKey);
+                $merge_vars = array(
+                    'FNAME' => $this->owner->FirstName,
+                    'LNAME' => $this->owner->Surname,
+                );
 
-            //setup the fields to sync if they have been entered in to SiteConfig
-            if (APES::getSyncFields()) {
-                $fields = APES::getSyncFields();
-                foreach ($fields as $field) {
-                    $field = trim($field);
-                    $tag = strtoupper(substr($field, 0, 8));
-                    $merge_vars[$tag] = $this->owner->$field;
+                //setup the fields to sync if they have been entered in to SiteConfig
+                /*
+                  if (APES::getSyncFields()) {
+                  $fields = APES::getSyncFields();
+                  foreach ($fields as $field) {
+                  $field = trim($field);
+                  $tag = strtoupper(substr($field, 0, 8));
+                  $merge_vars[$tag] = $this->owner->$field;
+                  }
+                  } */
+
+                //make sure the member did't unsubscribe 
+                if (!$this->isUnsubscribed($this->owner->Email)) {
+                    $doubleoptin = ($siteconfig->APESDoubleOptIn) ? true : false;
+
+                    //add them or update them in the list.
+                    $api->listSubscribe($siteconfig->MailchimpListId, $this->owner->Email, $merge_vars, 'html', $doubleoptin, true, true, false);
+
+                    //return the unique MC id for this member - may look at using this later to do 2 way sync.
+                    $memberinfo = $api->listMemberInfo($siteconfig->MailchimpListId, $this->owner->Email);
+                    $this->owner->MailChimpID = $memberinfo['id'];
                 }
-            }
-
-            //make sure the member did't unsubscribe 
-            if (!$this->isUnsubscribed($this->owner->Email)) {
-                $doubleoptin = ($siteconfig->APESDoubleOptIn) ? true : false;
-
-                //add them or update them in the list.
-                $api->listSubscribe($siteconfig->MailchimpListId, $this->owner->Email, $merge_vars, 'html', $doubleoptin, true, true, false);
-
-                //return the unique MC id for this member - may look at using this later to do 2 way sync.
-                $memberinfo = $api->listMemberInfo($siteconfig->MailchimpListId, $this->owner->Email);
-                $this->owner->MailChimpID = $memberinfo['id'];
             }
         }
     }
