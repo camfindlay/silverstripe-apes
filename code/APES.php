@@ -1,5 +1,4 @@
 <?php
-use Mailchimp;
 /**
  * Automated Provision for Email Services (APES)
  * 
