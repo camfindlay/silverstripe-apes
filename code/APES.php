@@ -101,6 +101,9 @@ class APES extends DataExtension {
 	 * @return array
 	 */
 	public function getMailChimpUserGroupings() {
+		// Unsubscribed users are treated as completely unsubscribed
+		if($this->isUnsubscribed()) return array();
+
 		// Map synchronised fields to mailchimp tags, ensuring to retrieve full profile
 		// prior to safely merge updated fields with existing ones
 		$memberInformation = $this->getMailChimpInformation();
@@ -393,11 +396,12 @@ class APES extends DataExtension {
 		if($this->isPending()) {
 			return LiteralField::create(
 				"{$prefix}[Pending]",
-				"<p class='mailchimp-pending'>Your subscription is currently pending email verification</p>"
+				"<p class='mailchimp-pending'>Your subscription is currently pending email verification.<br />".
+					"Please check your email and verify to confirm.</p>"
 			);
 		}
 
-		$groupFields = CompositeField::create(
+		$field = CompositeField::create(
 			// Flag to indicate these fields should be processed by the response handler
 			HiddenField::create("{$prefix}[Enabled]", false, 1)
 		)->addExtraClass('mailchimp-options');
@@ -409,7 +413,7 @@ class APES extends DataExtension {
 
 			// Determine field to use
 			if($mailGroup['type'] === 'checkboxes') {
-				$groupFields->push(
+				$field->push(
 					CheckboxSetField::create(
 						"{$prefix}[Groups][{$groupID}]",
 						$mailGroup['name'],
@@ -418,19 +422,23 @@ class APES extends DataExtension {
 					)->addExtraClass('mailchimp-option')
 				);
 			} else {
-				// NOOP - not implemented
+				// Not implemented
+				user_error('Mailchimp group type '.$mailGroup['type'].' not implemented', E_USER_WARNING);
 			}
 		}
 
-		// Create subscription section
-		return CompositeField::create(
-			CheckboxField::create(
-				"{$prefix}[Subscribed]",
-				"I wish to subscribe for email updates",
-				$this->isSubscribed()
-			)->addExtraClass('mailchimp-subscribe'),
-			$groupFields
-		)->addExtraClass('mailchimp-fields');
+		// If there are no groups, replace all subscriptions with a single checkbox
+		if(empty($groups)) {
+			$field->push(
+				CheckboxField::create(
+					"{$prefix}[Subscribed]",
+					"I wish to subscribe for email updates",
+					$this->isSubscribed()
+				)->addExtraClass('mailchimp-subscribe')
+			);
+		}
+
+		return $field;
 	}
 
 	/**
@@ -447,10 +455,7 @@ class APES extends DataExtension {
 		if(empty($postedData['Enabled'])) return;
 
 		// Check if subscribing or not
-		if(empty($postedData['Subscribed'])) {
-			$this->unsubscribeMailChimpUser();
-			return;
-		}
+		$subscribed = !empty($postedData['Subscribed']);
 
 		// Generate list of groups
 		$groups = array();
@@ -458,13 +463,19 @@ class APES extends DataExtension {
 		foreach($groupData as $groupDataItem) {
 			// Skip fully unselected groups
 			if(empty($postedData['Groups'][$groupDataItem['id']])) continue;
+			$subscribed = true;
 			$groups[] = array(
 				'id' => $groupDataItem['id'],
 				'name' => $groupDataItem['name'],
 				'groups' => array_values($postedData['Groups'][$groupDataItem['id']])
 			);
 		}
-		$this->subscribeMailChimpUser($groups);
+
+		if($subscribed) {
+			$this->subscribeMailChimpUser($groups);
+		} else {
+			$this->unsubscribeMailChimpUser();
+		}
 	}
 
 }
