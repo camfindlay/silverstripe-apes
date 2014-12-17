@@ -1,16 +1,21 @@
 {
-        "name": "camfindlay/apes",
-        "description": "The Automated Provision of Email Services (APES) module will allow you to set up an automated sync mechanism between the SilverStripe Member DataObject and MailChimp.",
-        "type": "silverstripe-module",
-        "keywords": ["silverstripe","mailchimp","email","member"],
-        "license": "BSD-3-Clause",
-        "authors": [{
-                "name": "Cam Findlay",
-                "email": "cam@silverstripe.com"
-        }],
-        "require": {
-                "silverstripe/framework": "~3.1", 
-                "silverstripe/cms": "~3.1",
-                "mailchimp/mailchimp": "2.0.*@stable"
-        }
+	"name": "camfindlay/apes",
+	"description": "The Automated Provision of Email Services (APES) module will allow you to set up an automated sync mechanism between the SilverStripe Member DataObject and MailChimp.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe","mailchimp","email","member"],
+	"license": "BSD-3-Clause",
+	"authors": [{
+		"name": "Cam Findlay",
+		"email": "cam@silverstripe.com"
+	}],
+	"require": {
+		"silverstripe/framework": "~3.1", 
+		"silverstripe/cms": "~3.1",
+		"mailchimp/mailchimp": "2.0.*@stable"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-refactor": "1.0.x-dev"
+		}
+	}
 }
