@@ -12,10 +12,5 @@
 		"silverstripe/framework": "~3.1", 
 		"silverstripe/cms": "~3.1",
 		"mailchimp/mailchimp": "2.0.*@stable"
-	},
-	"extra": {
-		"branch-alias": {
-			"dev-refactor": "1.0.x-dev"
-		}
 	}
 }
