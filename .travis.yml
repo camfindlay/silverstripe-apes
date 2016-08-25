@@ -1,0 +1,31 @@
+language: php
+
+php: 
+  - 5.4
+
+env:
+  global:
+    - CORE_RELEASE=3.2
+  matrix:
+    - DB=MYSQL
+    - DB=SQLITE
+    - DB=PGSQL
+
+matrix:
+  include:
+    - php: 5.6
+      env: DB=MYSQL  
+    - php: 5.5
+      env: DB=MYSQL
+    - php: 5.3
+      env: DB=MYSQL
+
+before_script:
+  - composer self-update
+  - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
+  - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
+  - cd ~/builds/ss
+  - "if [ -d silverstripe-apes ]; then mv silverstripe-apes apes; fi;"
+
+script: 
+ - phpunit apes/tests/
