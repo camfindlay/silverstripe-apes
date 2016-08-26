@@ -55,7 +55,7 @@ class APES extends DataExtension
         if (defined('SS_MAILCHIMP_LIST_ID')) {
             return SS_MAILCHIMP_LIST_ID;
         }
-        return $this->owner->config()->mailchimp_list_id;
+        return Config::inst()->get(__CLASS__, 'mailchimp_list_id');
     }
 
     /**
